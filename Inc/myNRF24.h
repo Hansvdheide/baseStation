@@ -46,6 +46,9 @@ extern dataPacket dataStruct;
 //blink leds for debugging purposes
 void fun();
 
+void fun2();
+void fun2out();
+
 //set a specific bit in a byte to a 1 or a 0
 uint8_t setBit(uint8_t byte, uint8_t position, uint8_t value);
 

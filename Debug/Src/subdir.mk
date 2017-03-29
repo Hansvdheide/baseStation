@@ -8,6 +8,7 @@ C_SRCS += \
 ../Src/gpio.c \
 ../Src/main.c \
 ../Src/myNRF24.c \
+../Src/packing.c \
 ../Src/spi.c \
 ../Src/stm32f3xx_hal_msp.c \
 ../Src/stm32f3xx_it.c \
@@ -21,6 +22,7 @@ OBJS += \
 ./Src/gpio.o \
 ./Src/main.o \
 ./Src/myNRF24.o \
+./Src/packing.o \
 ./Src/spi.o \
 ./Src/stm32f3xx_hal_msp.o \
 ./Src/stm32f3xx_it.o \
@@ -34,6 +36,7 @@ C_DEPS += \
 ./Src/gpio.d \
 ./Src/main.d \
 ./Src/myNRF24.d \
+./Src/packing.d \
 ./Src/spi.d \
 ./Src/stm32f3xx_hal_msp.d \
 ./Src/stm32f3xx_it.d \

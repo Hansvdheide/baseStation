@@ -51,6 +51,20 @@ void fun(){
 	  HAL_Delay(100);
 }
 
+void fun2(){
+	HAL_GPIO_WritePin(GPIOE, LD4_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE, LD8_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE, LD9_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOE, LD5_Pin, GPIO_PIN_SET);
+}
+
+void fun2out(){
+	HAL_GPIO_WritePin(GPIOE, LD4_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOE, LD8_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOE, LD9_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOE, LD5_Pin, GPIO_PIN_RESET);
+}
+
 
 //set a specific bit in a byte to a 1 or a 0
 uint8_t setBit(uint8_t byte, uint8_t position, uint8_t value){
@@ -869,6 +883,7 @@ void waitAck(SPI_HandleTypeDef* spiHandle, uint8_t roboID){
 dataPacket dataStruct;
 void roboCallback(SPI_HandleTypeDef* spiHandle){
 		uint8_t dataArray[8];
+
 
 		ceLow(spiHandle);
 		readData(spiHandle, dataArray, 8);

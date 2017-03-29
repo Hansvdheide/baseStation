@@ -50,6 +50,7 @@
 /* USER CODE BEGIN Includes */
 #include "myNRF24.h"
 #include "TextOut.h"
+#include "packing.h"
 
 /* USER CODE END Includes */
 
@@ -77,6 +78,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+	uint8_t madeUpPacket[8];
 
   /* USER CODE END 1 */
 
@@ -100,25 +102,73 @@ int main(void)
   ceLow(&hspi3);
   uint8_t address[5] = {0x12, 0x34, 0x56, 0x78, 0x97};
   initBase(&hspi3, 0x2A, address);
+  uint8_t on = 0;
+  GPIO_PinState buttom6;
+  GPIO_PinState buttom5;
+  GPIO_PinState prevButtom6;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  int id = 8;
+  int robot_vel = 0;
+  int ang = 0;
+  uint8_t rot_cclockwise = 0;
+  int w_vel = 0;
+  uint8_t kick_force = 0;
+  uint8_t do_kick = 0;
+  uint8_t chip = 0;
+  uint8_t forced = 0;
+  uint8_t dribble_cclockwise = 0;
+  uint8_t dribble_vel = 0;
+  uint8_t* byteArr = 0;
+
   while (1)
   {
+	  buttom6 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_7);
+	  buttom5 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9);
 
-
-	  if(!HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_7)){
+	  if(!buttom5){
 		  fun();
-		  printAllRegisters(&hspi3);
 	  }
+
+
+	  if(!buttom6 && prevButtom6 != buttom6){
+
+
+
+		  //printAllRegisters(&hspi3);
+		  on = !on;
+		  if(on == 1){
+			  robot_vel = 750;
+			  ang = 256;
+			  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+		  }
+		  else{
+			  robot_vel = 750;
+			  ang = 0;
+			  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+		  }
+		  for(int i = 0; i < 7; i++){
+			  usbData[i] = madeUpPacket[i];
+
+		  }
+		  usbData[7] = 0;
+		  usbLength = 8;
+		  for(int i = 0; i < 8; i++){
+			  sprintf(smallStrBuffer, "byte %i: %x\n", i, usbData[i]);
+			  TextOut(smallStrBuffer);
+		  }
+
+	  }
+
 
 	  if(usbLength == 8){
 		  //uint8_t testData[8] = {42, 42, 42, 42, 42, 42, 42,42};
 		  sendPacketPart1(&hspi3, usbData);
 		  usbLength = 0;
-
 	  }
 
 	  if(usbLength != 0){
@@ -126,7 +176,7 @@ int main(void)
 	  }
 
 
-
+	  prevButtom6 = buttom6;
 	  waitAck(&hspi3, usbData[0] >> 4);
 
 

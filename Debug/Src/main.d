@@ -46,7 +46,9 @@ Src/main.o: ../Src/main.c \
  C:/Users/gebruiker/workspace/Basestation/Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
  C:/Users/gebruiker/workspace/Basestation/Inc/gpio.h \
  C:/Users/gebruiker/workspace/Basestation/Inc/spi.h \
- C:/Users/gebruiker/workspace/Basestation/Inc/TextOut.h
+ C:/Users/gebruiker/workspace/Basestation/Inc/TextOut.h \
+ C:/Users/gebruiker/workspace/Basestation/Inc/packing.h \
+ C:/Users/gebruiker/workspace/Basestation/Inc/textOut.h
 
 C:/Users/gebruiker/workspace/Basestation/Inc/main.h:
 
@@ -143,3 +145,7 @@ C:/Users/gebruiker/workspace/Basestation/Inc/gpio.h:
 C:/Users/gebruiker/workspace/Basestation/Inc/spi.h:
 
 C:/Users/gebruiker/workspace/Basestation/Inc/TextOut.h:
+
+C:/Users/gebruiker/workspace/Basestation/Inc/packing.h:
+
+C:/Users/gebruiker/workspace/Basestation/Inc/textOut.h:
