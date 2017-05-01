@@ -97,22 +97,25 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 
-  fun();
+  //fun();
   nssHigh(&hspi3);
   ceLow(&hspi3);
   uint8_t address[5] = {0x12, 0x34, 0x56, 0x78, 0x97};
   initBase(&hspi3, 0x2A, address);
-  uint8_t on = 0;
   GPIO_PinState buttom6;
   GPIO_PinState buttom5;
+  GPIO_PinState buttom4;
+  GPIO_PinState buttom3;
+  GPIO_PinState buttom2;
   GPIO_PinState prevButtom6;
+  uint8_t remote = 0;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  int id = 8;
+  int id = 7;
   int robot_vel = 0;
   int ang = 0;
   uint8_t rot_cclockwise = 0;
@@ -124,52 +127,75 @@ int main(void)
   uint8_t dribble_cclockwise = 0;
   uint8_t dribble_vel = 0;
   uint8_t* byteArr = 0;
+  int cnt = 0;
 
   while (1)
   {
 	  buttom6 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_7);
 	  buttom5 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9);
+	  buttom4 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_11);
+	  buttom3 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_13);
+	  buttom2 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15);
 
-	  if(!buttom5){
-		  fun();
+	  if(!buttom6){
+		  //TextOut("forward");
+		  //remote = 1;
+		  robot_vel = 1000;
+		  ang = 0;
+		  //createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+
+		  printAllRegisters(&hspi3);
+	  }
+	  else if(!buttom5){
+		  //TextOut("sidewards");
+		  remote = 1;
+		  robot_vel = 1000;
+		  ang = 126;
+		  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+	  }
+	  else if(!buttom4){
+		  //TextOut("turning");
+		  remote = 1;
+		  w_vel = 360;
+		  rot_cclockwise = 1;
+		  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+
+	  }
+	  else{
+		  //TextOut("stop");
+		  robot_vel = 0;
+		  w_vel = 0;
+		  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+
 	  }
 
 
-	  if(!buttom6 && prevButtom6 != buttom6){
+	  if(remote == 1){
 
-
-
-		  //printAllRegisters(&hspi3);
-		  on = !on;
-		  if(on == 1){
-			  robot_vel = 750;
-			  ang = 256;
-			  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
-		  }
-		  else{
-			  robot_vel = 750;
-			  ang = 0;
-			  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
-		  }
 		  for(int i = 0; i < 7; i++){
 			  usbData[i] = madeUpPacket[i];
 
 		  }
 		  usbData[7] = 0;
 		  usbLength = 8;
-		  for(int i = 0; i < 8; i++){
+		  /*for(int i = 0; i < 8; i++){
 			  sprintf(smallStrBuffer, "byte %i: %x\n", i, usbData[i]);
 			  TextOut(smallStrBuffer);
-		  }
-
+		  }*/
+		  sendPacketPart1(&hspi3, usbData);
+		  usbLength = 0;
+		  HAL_Delay(10);
 	  }
 
 
 	  if(usbLength == 8){
 		  //uint8_t testData[8] = {42, 42, 42, 42, 42, 42, 42,42};
+
 		  sendPacketPart1(&hspi3, usbData);
 		  usbLength = 0;
 	  }
+
+
 
 	  if(usbLength != 0){
 		  //fun();

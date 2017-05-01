@@ -183,6 +183,9 @@ void sendData(SPI_HandleTypeDef* spiHandle, uint8_t data[], uint8_t length);
 //read a byte from the buffer. only used in RX mode
 void readData(SPI_HandleTypeDef* spiHandle, uint8_t* receiveBuffer, uint8_t length);
 
+void setLowSpeed(SPI_HandleTypeDef* spiHandle);
+
+
 
 //---------------------------------debug----------------------------------//
 //print all the registers

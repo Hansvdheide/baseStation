@@ -1,5 +1,5 @@
 /*
- * myNRF24.c
+' * myNRF24.c
  *
  *  Created on: 19 sep. 2016
  *      Author: Hans-van-der-Heide
@@ -737,6 +737,19 @@ void readData(SPI_HandleTypeDef* spiHandle, uint8_t* receiveBuffer, uint8_t leng
 
 }
 
+void setLowSpeed(SPI_HandleTypeDef* spiHandle){
+	uint8_t reg06 = readReg(spiHandle, 0x06);
+	reg06 = setBit(reg06, 5, 1);
+	reg06 = setBit(reg06, 3, 0);
+	writeReg(spiHandle, 0x06, reg06);
+}
+
+void enableAutoRetransmitSlow(SPI_HandleTypeDef* spiHandle){
+	//uint8_t reg04 = 0xf3;
+	writeReg(spiHandle, 0x04, 0x11);
+}
+
+
 //---------------------------------debug----------------------------------//
 
 void printAllRegisters(SPI_HandleTypeDef* spiHandle){
@@ -795,6 +808,8 @@ void initRobo(SPI_HandleTypeDef* spiHandle, uint8_t freqChannel, uint8_t address
 	//set the RX address of channel 1
 	setRXaddress(spiHandle, addressLong, 1);
 
+	setLowSpeed(spiHandle);
+
 	//go to RX mode and start listening
 	powerUpRX(spiHandle);
 
@@ -822,6 +837,10 @@ void initBase(SPI_HandleTypeDef* spiHandle, uint8_t freqChannel, uint8_t address
 
 	//set auto retransmit to 1 time with 250 us
 	writeReg(spiHandle, 0x04, 0x00);
+
+	setLowSpeed(spiHandle);
+
+	enableAutoRetransmitSlow(spiHandle);
 
 	//go to TX mode and be ready to listen
 	powerUpTX(spiHandle);
