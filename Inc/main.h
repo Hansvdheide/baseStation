@@ -67,6 +67,8 @@
 #define OSC_IN_GPIO_Port GPIOF
 #define OSC_OUT_Pin GPIO_PIN_1
 #define OSC_OUT_GPIO_Port GPIOF
+#define Blue_Pin GPIO_PIN_0
+#define Blue_GPIO_Port GPIOA
 #define SW6_Pin GPIO_PIN_7
 #define SW6_GPIO_Port GPIOE
 #define LD4_Pin GPIO_PIN_8

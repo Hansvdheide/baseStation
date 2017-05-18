@@ -702,6 +702,8 @@ void flushRX(SPI_HandleTypeDef* spiHandle){
 //this can be done using the powerUpTX function
 //not doing this will cause the wireless module to stay on, which is a wast of energy.
 void sendData(SPI_HandleTypeDef* spiHandle, uint8_t data[], uint8_t length){
+	//TextOut("before sending\n");
+
 	uint8_t troep[length];
 	ceLow(spiHandle);
 
@@ -718,6 +720,8 @@ void sendData(SPI_HandleTypeDef* spiHandle, uint8_t data[], uint8_t length){
 
 	//send over air
 	ceHigh(spiHandle);
+
+
 }
 
 //read a byte from the buffer. only used in RX mode
@@ -830,7 +834,7 @@ void initBase(SPI_HandleTypeDef* spiHandle, uint8_t freqChannel, uint8_t address
 	setDataPipeArray(spiHandle, dataPipeArray);
 
 	//set the RX buffer size to 8 bytes
-	setRXbufferSize(spiHandle, 8);
+	setRXbufferSize(spiHandle, 12);
 
 	//set the TX address of
 	setTXaddress(spiHandle, address);
@@ -846,7 +850,7 @@ void initBase(SPI_HandleTypeDef* spiHandle, uint8_t freqChannel, uint8_t address
 	powerUpTX(spiHandle);
 }
 
-uint8_t sendPacketPart1(SPI_HandleTypeDef* spiHandle, uint8_t packet[8]){
+uint8_t sendPacketPart1(SPI_HandleTypeDef* spiHandle, uint8_t packet[12]){
 	/*sprintf(smallStrBuffer, "packet[0] = %i\n", packet[0]);
 	TextOut(smallStrBuffer);
 	sprintf(smallStrBuffer, "packet[1] = %i\n", packet[1]);
@@ -864,10 +868,10 @@ uint8_t sendPacketPart1(SPI_HandleTypeDef* spiHandle, uint8_t packet[8]){
 	sprintf(smallStrBuffer, "packet[8] = %i\n", packet[7]);
 	TextOut(smallStrBuffer);*/
 	uint8_t addressLong[5] = {0x12, 0x34, 0x56, 0x78, 0x90 + (packet[0] >> 4)};
-	/*sprintf(smallStrBuffer, "address[5] = %x\n", addressLong[4]);
+	/*sprintf(smallStrBuffer, "address[4] = %x\n", addressLong[4]);
 	TextOut(smallStrBuffer);*/
 	setTXaddress(spiHandle, addressLong);
-	sendData(spiHandle, packet, 8);
+	sendData(spiHandle, packet, 12);
 	return addressLong[4];
 }
 
@@ -905,7 +909,7 @@ void roboCallback(SPI_HandleTypeDef* spiHandle){
 
 
 		ceLow(spiHandle);
-		readData(spiHandle, dataArray, 8);
+		readData(spiHandle, dataArray, 12);
 		dataStruct.robotID = dataArray[0] >> 4;
 		dataStruct.robotVelocity = ((dataArray[0] & 0xF) << 8) + dataArray[1];
 		dataStruct.movingDirection = (dataArray[2] << 1) + (dataArray[3] >> 4);

@@ -78,7 +78,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	uint8_t madeUpPacket[8];
+	uint8_t madeUpPacket[12];
 
   /* USER CODE END 1 */
 
@@ -127,6 +127,8 @@ int main(void)
   uint8_t dribble_cclockwise = 0;
   uint8_t dribble_vel = 0;
   uint8_t* byteArr = 0;
+  uint8_t prevBlue = 0;
+  uint8_t blue = 0;
   int cnt = 0;
 
   while (1)
@@ -136,15 +138,21 @@ int main(void)
 	  buttom4 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_11);
 	  buttom3 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_13);
 	  buttom2 = HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_15);
+	  blue = HAL_GPIO_ReadPin(GPIOA, Blue_Pin);
+
+	  if(blue == 1 && blue != prevBlue){
+		  //initBase(&hspi3, 0x2A, address);
+		  HAL_Delay(100);
+		  printAllRegisters(&hspi3);
+	  }
 
 	  if(!buttom6){
 		  //TextOut("forward");
-		  //remote = 1;
+		  remote = 1;
 		  robot_vel = 1000;
 		  ang = 0;
-		  //createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
+		  createRobotPacket(id, robot_vel, ang, rot_cclockwise, w_vel, kick_force, do_kick, chip, forced, dribble_cclockwise, dribble_vel, madeUpPacket);
 
-		  printAllRegisters(&hspi3);
 	  }
 	  else if(!buttom5){
 		  //TextOut("sidewards");
@@ -172,12 +180,12 @@ int main(void)
 
 	  if(remote == 1){
 
-		  for(int i = 0; i < 7; i++){
+		  for(int i = 0; i < 12; i++){
 			  usbData[i] = madeUpPacket[i];
 
 		  }
-		  usbData[7] = 0;
-		  usbLength = 8;
+		  //usbData[7] = 0;
+		  usbLength = 12;
 		  /*for(int i = 0; i < 8; i++){
 			  sprintf(smallStrBuffer, "byte %i: %x\n", i, usbData[i]);
 			  TextOut(smallStrBuffer);
@@ -188,8 +196,13 @@ int main(void)
 	  }
 
 
-	  if(usbLength == 8){
+	  if(usbLength == 12){
 		  //uint8_t testData[8] = {42, 42, 42, 42, 42, 42, 42,42};
+
+		  /*for(int i = 0; i < 12; i++){
+			  sprintf(smallStrBuffer, "%02x", usbData[i]);
+			  TextOut(smallStrBuffer);
+		  }*/
 
 		  sendPacketPart1(&hspi3, usbData);
 		  usbLength = 0;
@@ -203,6 +216,7 @@ int main(void)
 
 
 	  prevButtom6 = buttom6;
+	  prevBlue = blue;
 	  waitAck(&hspi3, usbData[0] >> 4);
 
 
